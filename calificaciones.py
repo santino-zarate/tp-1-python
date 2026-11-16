@@ -60,4 +60,14 @@ def calcular_promedio(dni):
 
 # Devuelve el historial del estudiante: todas sus materias con sus notas.
 def obtener_historial(dni):
-    pass
+    if dni not in estudiantes:
+        return {"error": "No existe un estudiante con ese DNI."}
+    estudiante = estudiantes[dni]
+    materias = estudiante.get("materias", {})
+    if not materias:
+        return {"error": "El estudiante todavía no tiene materias cargadas."}
+    return {
+        "nombre": estudiante["nombre"],
+        "apellido": estudiante["apellido"],
+        "materias": materias
+    }
