@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 import estudiantes
 import calificaciones
 
@@ -23,9 +24,48 @@ def abrir_ventana(titulo):
     ventana.title(titulo)
     tk.Label(ventana, text="En construcción").pack(padx=40, pady=30)
 
-# Sección 1: acá después se va a llamar a estudiantes.registrar_estudiante().
+# Sección 1: ventana para cargar un estudiante nuevo.
 def abrir_registro():
-    abrir_ventana("Registrar estudiante")
+    ventana = tk.Toplevel()
+    ventana.title("Registrar estudiante")
+    centrar_ventana(ventana, 400, 350)
+    ventana.configure(bg=COLOR_FONDO)
+    tk.Label(ventana, text="Registrar estudiante",
+             font=("Arial", 16, "bold"),
+             bg=COLOR_FONDO, fg=COLOR_PRINCIPAL).pack(pady=15)
+
+    # Los tres campos del formulario.
+    crear_etiqueta(ventana, "DNI")
+    entrada_dni = tk.Entry(ventana, width=30)
+    entrada_dni.pack(pady=5)
+    crear_etiqueta(ventana, "Nombre")
+    entrada_nombre = tk.Entry(ventana, width=30)
+    entrada_nombre.pack(pady=5)
+    crear_etiqueta(ventana, "Apellido")
+    entrada_apellido = tk.Entry(ventana, width=30)
+    entrada_apellido.pack(pady=5)
+
+    # Toma lo escrito, llama a la función y muestra si salió bien o mal.
+    def registrar():
+        ok, mensaje = estudiantes.registrar_estudiante(
+            entrada_dni.get(),
+            entrada_nombre.get(),
+            entrada_apellido.get()
+        )
+        if ok:
+            messagebox.showinfo("Registrar estudiante", mensaje)
+            # Vaciamos los campos para poder cargar otro estudiante.
+            entrada_dni.delete(0, tk.END)
+            entrada_nombre.delete(0, tk.END)
+            entrada_apellido.delete(0, tk.END)
+        else:
+            messagebox.showerror("Registrar estudiante", mensaje)
+
+    tk.Button(ventana, text="Registrar",
+              command=registrar,
+              bg=COLOR_PRINCIPAL, fg=COLOR_BLANCO).pack(pady=10)
+    tk.Button(ventana, text="Cerrar",
+              command=ventana.destroy).pack(pady=5)
 
 # Sección 2: acá después se va a llamar a estudiantes.buscar_estudiante().
 def abrir_busqueda():
