@@ -1,6 +1,4 @@
-# Importamos Tkinter (la librería de ventanas) con el nombre corto "tk".
 import tkinter as tk
-# Importamos los módulos del equipo para conectarlos más adelante.
 import estudiantes
 import calificaciones
 
@@ -18,7 +16,6 @@ def abrir_registro():
 def abrir_busqueda():
     abrir_ventana("Buscar estudiante")
 
-# Sección 3: acá después se va a llamar a calificaciones.cargar_nota().
 def abrir_calificaciones():
     ventana = tk.Toplevel()
     ventana.title("Cargar materias y calificaciones")
@@ -54,10 +51,28 @@ def abrir_calificaciones():
     tk.Button(ventana, text="Guardar nota",
               command=guardar_nota).pack(pady=10)
 
-
-# Sección 4: acá después se va a llamar a calificaciones.calcular_promedio().
 def abrir_promedios():
-    abrir_ventana("Calcular promedios")
+    ventana = tk.Toplevel()
+    ventana.title("Calcular promedios")
+    tk.Label(ventana, text="DNI del estudiante:").pack()
+    entrada_dni = tk.Entry(ventana)
+    entrada_dni.pack()
+    resultado = tk.Label(ventana, text="")
+    resultado.pack(pady=10)
+    def mostrar_promedios():
+        dni = entrada_dni.get()
+        datos = calificaciones.calcular_promedio(dni)
+        if "error" in datos:
+            resultado.config(text=datos["error"])
+        else:
+            texto = "Promedios por materia:\n"
+
+            for materia, promedio in datos["promedios_materias"].items():
+                texto += materia + ": " + str(promedio) + "\n"
+
+            texto += "Promedio general: " + str(datos["promedio_general"])
+            resultado.config(text=texto)
+    tk.Button(ventana, text="Calcular", command=mostrar_promedios).pack()
 
 # Sección 5: acá después se va a llamar a calificaciones.obtener_historial().
 def abrir_historial():
