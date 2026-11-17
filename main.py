@@ -211,7 +211,50 @@ def abrir_busqueda():
         else:
             messagebox.showerror("Eliminar estudiante", mensaje)
 
+    def editar_seleccionado():
+        seleccion = lista.curselection()
+        if not seleccion:
+            messagebox.showwarning("Editar estudiante", "Seleccion\u00e1 un estudiante de la lista")
+            return
+
+        alumno = resultados_actuales[seleccion[0]]
+        dni = alumno["dni"]
+        ventana_edicion = tk.Toplevel(ventana)
+        ventana_edicion.title("Editar estudiante")
+        centrar_ventana(ventana_edicion, 390, 370)
+        ventana_edicion.configure(bg=COLOR_FONDO)
+        crear_titulo(ventana_edicion, "Editar estudiante")
+
+        crear_etiqueta(ventana_edicion, "DNI")
+        entrada_dni = crear_campo(ventana_edicion, 32)
+        entrada_dni.insert(0, dni)
+        entrada_dni.config(state="readonly")
+        crear_etiqueta(ventana_edicion, "Nombre")
+        entrada_nombre = crear_campo(ventana_edicion, 32)
+        entrada_nombre.insert(0, alumno["nombre"])
+        crear_etiqueta(ventana_edicion, "Apellido")
+        entrada_apellido = crear_campo(ventana_edicion, 32)
+        entrada_apellido.insert(0, alumno["apellido"])
+
+        def guardar_cambios():
+            ok, mensaje = estudiantes.editar_estudiante(
+                dni, entrada_nombre.get(), entrada_apellido.get()
+            )
+            if not ok:
+                messagebox.showerror("Editar estudiante", mensaje)
+                return
+
+            messagebox.showinfo("Editar estudiante", mensaje)
+            ventana_edicion.destroy()
+            entrada_busqueda.delete(0, tk.END)
+            entrada_busqueda.insert(0, ultimo_termino)
+            buscar()
+
+        crear_boton(ventana_edicion, "Guardar", guardar_cambios).pack(fill="x", padx=45, pady=6)
+        crear_boton(ventana_edicion, "Cancelar", ventana_edicion.destroy, principal=False).pack(fill="x", padx=45)
+
     crear_boton(ventana, "Buscar", buscar).pack(fill="x", padx=45, pady=6)
+    crear_boton(ventana, "Editar", editar_seleccionado, principal=False).pack(fill="x", padx=45, pady=6)
     crear_boton(ventana, "Eliminar", eliminar_seleccionado, principal=False).pack(fill="x", padx=45, pady=6)
     crear_boton(ventana, "Cerrar", ventana.destroy, principal=False).pack(fill="x", padx=45)
 

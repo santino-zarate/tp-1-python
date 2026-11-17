@@ -2,6 +2,10 @@ from datos import estudiantes, guardar_datos
 from datetime import datetime
 import unicodedata
 
+def _validar_nombre_apellido(nombre, apellido):
+    return bool(nombre.strip() and apellido.strip())
+
+
 def registrar_estudiante(dni, nombre, apellido, fecha_nacimiento, año_ingreso):
     dni = dni.strip()
     nombre = nombre.strip()
@@ -9,7 +13,7 @@ def registrar_estudiante(dni, nombre, apellido, fecha_nacimiento, año_ingreso):
     fecha_nacimiento = fecha_nacimiento.strip()
     año_ingreso = año_ingreso.strip()
 
-    if not dni or not nombre or not apellido or not fecha_nacimiento or not año_ingreso:
+    if not dni or not _validar_nombre_apellido(nombre, apellido) or not fecha_nacimiento or not año_ingreso:
         return (False, "Completá todos los campos")
 
     if not dni.isdigit():
@@ -48,6 +52,21 @@ def eliminar_estudiante(dni):
     del estudiantes[dni]
     guardar_datos()
     return (True, "Estudiante eliminado")
+
+def editar_estudiante(dni, nombre, apellido):
+    dni = dni.strip()
+    if dni not in estudiantes:
+        return (False, "No existe un estudiante con ese DNI")
+
+    nombre = nombre.strip()
+    apellido = apellido.strip()
+    if not _validar_nombre_apellido(nombre, apellido):
+        return (False, "Complet\u00e1 nombre y apellido")
+
+    estudiantes[dni]["nombre"] = nombre
+    estudiantes[dni]["apellido"] = apellido
+    guardar_datos()
+    return (True, "Estudiante actualizado")
 
 def normalizar(texto):
     # "NFD" separa cada letra de su acento, y después borramos los acentos.
