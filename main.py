@@ -74,9 +74,26 @@ def abrir_promedios():
             resultado.config(text=texto)
     tk.Button(ventana, text="Calcular", command=mostrar_promedios).pack()
 
-# Sección 5: acá después se va a llamar a calificaciones.obtener_historial().
 def abrir_historial():
-    abrir_ventana("Consultar historial académico")
+    ventana = tk.Toplevel()
+    ventana.title("Consultar historial académico")
+    tk.Label(ventana, text="DNI del estudiante:").pack()
+    entrada_dni = tk.Entry(ventana)
+    entrada_dni.pack()
+    resultado = tk.Label(ventana, text="")
+    resultado.pack(pady=10)
+    def mostrar_historial():
+        dni = entrada_dni.get()
+        datos = calificaciones.obtener_historial(dni)
+        if "error" in datos:
+            resultado.config(text=datos["error"])
+        else:
+            texto = "Estudiante: " + datos["nombre"] + " " + datos["apellido"] + "\n"
+
+            for materia, notas in datos["materias"].items():
+                texto += "\n" + materia + ": " + str(notas)
+            resultado.config(text=texto)
+    tk.Button(ventana, text="Consultar", command=mostrar_historial).pack()
 
 # El programa arranca solo si ejecutamos este archivo directamente.
 if __name__ == "__main__":
