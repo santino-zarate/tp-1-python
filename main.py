@@ -127,12 +127,16 @@ def abrir_calificaciones():
     resultado = tk.Label(ventana, bg=COLOR_FONDO)
     resultado.pack(pady=10)
     def guardar_nota():
-        mensaje = calificaciones.cargar_nota(
+        datos = calificaciones.cargar_nota(
             entrada_dni.get(),
             entrada_materia.get(),
             entrada_nota.get()
         )
-        resultado.config(text=mensaje)
+        # Si vino un error lo mostramos, si no, el mensaje de que salió bien.
+        if "error" in datos:
+            resultado.config(text=datos["error"])
+        else:
+            resultado.config(text=datos["message"])
     tk.Button(ventana, text="Guardar calificación",
               command=guardar_nota,
               bg=COLOR_PRINCIPAL, fg=COLOR_BLANCO).pack(pady=10)

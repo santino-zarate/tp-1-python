@@ -5,9 +5,9 @@ def _obtener_estudiante(dni):
 def cargar_nota(dni, materia, nota):
     estudiante = _obtener_estudiante(dni)
     if estudiante is None:
-        return "Error: no existe un estudiante con ese DNI."
+        return {"error": "Error: no existe un estudiante con ese DNI."}
     if not materia or not materia.strip():
-        return "Error: debe ingresar una materia."
+        return {"error": "Error: debe ingresar una materia."}
     materia = materia.strip()
     try:
         nota = float(nota)
