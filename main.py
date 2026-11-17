@@ -67,9 +67,45 @@ def abrir_registro():
     tk.Button(ventana, text="Cerrar",
               command=ventana.destroy).pack(pady=5)
 
-# Sección 2: acá después se va a llamar a estudiantes.buscar_estudiante().
+# Sección 2: ventana para buscar un estudiante por DNI o por apellido.
 def abrir_busqueda():
-    abrir_ventana("Buscar estudiante")
+    ventana = tk.Toplevel()
+    ventana.title("Buscar estudiante")
+    centrar_ventana(ventana, 430, 420)
+    ventana.configure(bg=COLOR_FONDO)
+    tk.Label(ventana, text="Buscar estudiante",
+             font=("Arial", 16, "bold"),
+             bg=COLOR_FONDO, fg=COLOR_PRINCIPAL).pack(pady=15)
+
+    # Un solo casillero: sirve tanto para el DNI como para el apellido.
+    crear_etiqueta(ventana, "DNI o apellido")
+    entrada_busqueda = tk.Entry(ventana, width=30)
+    entrada_busqueda.pack(pady=5)
+
+    # Lista donde se van a mostrar los estudiantes encontrados.
+    lista = tk.Listbox(ventana, width=45, height=8)
+    lista.pack(pady=10)
+
+    # Busca lo escrito, limpia la lista anterior y muestra el resultado.
+    def buscar():
+        # Vaciamos la lista para no mezclar con la búsqueda anterior.
+        lista.delete(0, tk.END)
+        ok, resultado = estudiantes.buscar_estudiante(entrada_busqueda.get())
+        if not ok:
+            messagebox.showerror("Buscar estudiante", resultado)
+            return
+        if len(resultado) == 0:
+            messagebox.showinfo("Buscar estudiante", "No se encontraron estudiantes")
+            return
+        # Cada resultado se muestra como "DNI - Apellido, Nombre".
+        for alumno in resultado:
+            lista.insert(tk.END, alumno["dni"] + " - " + alumno["apellido"] + ", " + alumno["nombre"])
+
+    tk.Button(ventana, text="Buscar",
+              command=buscar,
+              bg=COLOR_PRINCIPAL, fg=COLOR_BLANCO).pack(pady=5)
+    tk.Button(ventana, text="Cerrar",
+              command=ventana.destroy).pack(pady=5)
 
 def abrir_calificaciones():
     ventana = tk.Toplevel()

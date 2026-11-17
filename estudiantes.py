@@ -2,6 +2,9 @@
 # También traemos guardar_datos para que el alta quede guardada en el archivo JSON.
 from datos import estudiantes, guardar_datos
 
+# Traemos unicodedata, que nos sirve para sacar los acentos al buscar.
+import unicodedata
+
 
 # Registra un estudiante nuevo en el diccionario usando el DNI como clave.
 def registrar_estudiante(dni, nombre, apellido):
@@ -34,7 +37,48 @@ def registrar_estudiante(dni, nombre, apellido):
     return (True, "Estudiante registrado")
 
 
-# Busca estudiantes por DNI o por apellido y devuelve los que coincidan.
-# (Se completa más adelante.)
+# Saca los acentos de un texto y lo pasa a minúsculas, para poder comparar
+# sin distinguir mayúsculas ni tildes (así "Pérez" y "perez" quedan iguales).
+def normalizar(texto):
+    # "NFD" separa cada letra de su acento, y después borramos los acentos.
+    texto_separado = unicodedata.normalize("NFD", texto)
+    letras = ""
+    for letra in texto_separado:
+        if unicodedata.category(letra) != "Mn":
+            letras += letra
+    return letras.lower()
+
+
+# Busca estudiantes por DNI exacto o por apellido (coincidencia parcial,
+# sin importar mayúsculas ni acentos).
 def buscar_estudiante(termino):
-    pass
+    # Sacamos los espacios de sobra del texto que se escribió.
+    termino = termino.strip()
+
+    # Si no escribieron nada, avisamos que falta el dato.
+    if termino == "":
+        return (False, "Ingresá un DNI o un apellido")
+
+    # Preparamos el texto una sola vez, sin acentos y en minúsculas.
+    buscado = normalizar(termino)
+    resultados = []
+
+    # Recorremos todos los estudiantes y nos quedamos con los que coinciden.
+    for dni, datos in estudiantes.items():
+        if termino.isdigit():
+            # Si escribieron números, buscamos ese DNI exacto.
+            coincide = (dni == termino)
+        else:
+            # Si escribieron letras, buscamos que el apellido contenga el texto.
+            coincide = (buscado in normalizar(datos["apellido"]))
+
+        # Si coincide, lo agregamos a la lista con los datos que se muestran.
+        if coincide:
+            resultados.append({
+                "dni": dni,
+                "nombre": datos["nombre"],
+                "apellido": datos["apellido"]
+            })
+
+    # La lista puede volver vacía: eso no es un error, es que no hubo coincidencias.
+    return (True, resultados)
