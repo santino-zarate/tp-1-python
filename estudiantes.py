@@ -39,6 +39,16 @@ def registrar_estudiante(dni, nombre, apellido, fecha_nacimiento, año_ingreso):
     guardar_datos()
     return (True, "Estudiante registrado")
 
+
+def eliminar_estudiante(dni):
+    dni = dni.strip()
+    if dni not in estudiantes:
+        return (False, "No existe un estudiante con ese DNI")
+
+    del estudiantes[dni]
+    guardar_datos()
+    return (True, "Estudiante eliminado")
+
 def normalizar(texto):
     # "NFD" separa cada letra de su acento, y después borramos los acentos.
     texto_separado = unicodedata.normalize("NFD", texto)

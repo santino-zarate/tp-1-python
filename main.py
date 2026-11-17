@@ -158,12 +158,18 @@ def abrir_busqueda():
                         font=("Arial", 12))
     contador.pack()
 
+    # Conservamos los resultados actuales para operar sobre la fila seleccionada.
+    resultados_actuales = []
+    ultimo_termino = ""
+
     # Busca lo escrito, limpia la lista anterior y muestra el resultado.
     def buscar():
-        # Vaciamos la lista para no mezclar con la búsqueda anterior.
+        nonlocal ultimo_termino
+        ultimo_termino = entrada_busqueda.get()
+        resultados_actuales.clear()
         lista.delete(0, tk.END)
         contador.config(text="")
-        ok, resultado = estudiantes.buscar_estudiante(entrada_busqueda.get())
+        ok, resultado = estudiantes.buscar_estudiante(ultimo_termino)
         if not ok:
             messagebox.showerror("Buscar estudiante", resultado)
             return
@@ -172,6 +178,7 @@ def abrir_busqueda():
             return
         # Cada resultado se muestra como "DNI - Apellido, Nombre".
         for alumno in resultado:
+            resultados_actuales.append(alumno)
             lista.insert(tk.END, formatear_dni(alumno["dni"]) + " - " + alumno["apellido"] + ", " + alumno["nombre"])
         # Avisamos cuántos encontró, en singular o en plural.
         if len(resultado) == 1:
@@ -179,7 +186,33 @@ def abrir_busqueda():
         else:
             contador.config(text=str(len(resultado)) + " estudiantes encontrados")
 
+    def eliminar_seleccionado():
+        seleccion = lista.curselection()
+        if not seleccion:
+            messagebox.showwarning("Eliminar estudiante", "Seleccion\u00e1 un estudiante de la lista")
+            return
+
+        alumno = resultados_actuales[seleccion[0]]
+        cantidad_materias = len(estudiantes.estudiantes[alumno["dni"]].get("materias", {}))
+        confirmacion = (
+            "\u00bfEliminar a " + alumno["nombre"] + " " + alumno["apellido"] +
+            " (DNI " + alumno["dni"] + ")?\n\nTambi\u00e9n se eliminar\u00e1n sus materias y notas. " +
+            "Tiene " + str(cantidad_materias) + " materias."
+        )
+        if not messagebox.askyesno("Confirmar eliminaci\u00f3n", confirmacion):
+            return
+
+        ok, mensaje = estudiantes.eliminar_estudiante(alumno["dni"])
+        if ok:
+            messagebox.showinfo("Eliminar estudiante", mensaje)
+            entrada_busqueda.delete(0, tk.END)
+            entrada_busqueda.insert(0, ultimo_termino)
+            buscar()
+        else:
+            messagebox.showerror("Eliminar estudiante", mensaje)
+
     crear_boton(ventana, "Buscar", buscar).pack(fill="x", padx=45, pady=6)
+    crear_boton(ventana, "Eliminar", eliminar_seleccionado, principal=False).pack(fill="x", padx=45, pady=6)
     crear_boton(ventana, "Cerrar", ventana.destroy, principal=False).pack(fill="x", padx=45)
 
     entrada_busqueda.focus_set()
