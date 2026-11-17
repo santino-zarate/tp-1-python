@@ -1,10 +1,8 @@
 # Importamos Tkinter (la librería de ventanas) con el nombre corto "tk".
 import tkinter as tk
-
 # Importamos los módulos del equipo para conectarlos más adelante.
 import estudiantes
 import calificaciones
-
 
 # Abre una ventana secundaria con el título de la sección y el aviso "En construcción".
 def abrir_ventana(titulo):
@@ -12,31 +10,58 @@ def abrir_ventana(titulo):
     ventana.title(titulo)
     tk.Label(ventana, text="En construcción").pack(padx=40, pady=30)
 
-
 # Sección 1: acá después se va a llamar a estudiantes.registrar_estudiante().
 def abrir_registro():
     abrir_ventana("Registrar estudiante")
-
 
 # Sección 2: acá después se va a llamar a estudiantes.buscar_estudiante().
 def abrir_busqueda():
     abrir_ventana("Buscar estudiante")
 
-
 # Sección 3: acá después se va a llamar a calificaciones.cargar_nota().
 def abrir_calificaciones():
-    abrir_ventana("Cargar materias y calificaciones")
+    ventana = tk.Toplevel()
+    ventana.title("Cargar materias y calificaciones")
+    ventana.geometry("400x350")
+    ventana.resizable(False, False)
+
+    tk.Label(ventana, text="Cargar calificación",
+             font=("Arial", 14, "bold")).pack(pady=15)
+
+    tk.Label(ventana, text="DNI del estudiante:").pack()
+    entrada_dni = tk.Entry(ventana)
+    entrada_dni.pack(pady=5)
+
+    tk.Label(ventana, text="Materia:").pack()
+    entrada_materia = tk.Entry(ventana)
+    entrada_materia.pack(pady=5)
+
+    tk.Label(ventana, text="Nota (1 a 10):").pack()
+    entrada_nota = tk.Entry(ventana)
+    entrada_nota.pack(pady=5)
+
+    resultado = tk.Label(ventana, text="")
+    resultado.pack(pady=10)
+
+    def guardar_nota():
+        dni = entrada_dni.get()
+        materia = entrada_materia.get()
+        nota = entrada_nota.get()
+
+        mensaje = calificaciones.cargar_nota(dni, materia, nota)
+        resultado.config(text=mensaje)
+
+    tk.Button(ventana, text="Guardar nota",
+              command=guardar_nota).pack(pady=10)
 
 
 # Sección 4: acá después se va a llamar a calificaciones.calcular_promedio().
 def abrir_promedios():
     abrir_ventana("Calcular promedios")
 
-
 # Sección 5: acá después se va a llamar a calificaciones.obtener_historial().
 def abrir_historial():
     abrir_ventana("Consultar historial académico")
-
 
 # El programa arranca solo si ejecutamos este archivo directamente.
 if __name__ == "__main__":
