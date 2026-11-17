@@ -155,7 +155,7 @@ def abrir_busqueda():
 
     # Cartel chiquito con la cantidad de resultados.
     contador = tk.Label(ventana, text="", bg=COLOR_FONDO, fg=COLOR_GRIS,
-                        font=("Arial", 9))
+                        font=("Arial", 12))
     contador.pack()
 
     # Busca lo escrito, limpia la lista anterior y muestra el resultado.
@@ -216,6 +216,10 @@ def abrir_calificaciones():
         else:
             resultado.config(text=datos["message"])
 
+        if datos["message"] == "Nota cargada correctamente.":
+            entrada_nota.delete(0, tk.END)
+            entrada_nota.focus_set()
+
     crear_boton(ventana, "Guardar calificación", guardar_nota).pack(fill="x", padx=45, pady=6)
     crear_boton(ventana, "Cerrar", ventana.destroy, principal=False).pack(fill="x", padx=45)
 
@@ -234,7 +238,7 @@ def abrir_promedios():
     entrada_dni = crear_campo(ventana, 36)
 
     resultado = tk.Label(ventana, bg=COLOR_FONDO, fg=COLOR_TEXTO,
-                         justify="left", wraplength=330)
+                         justify="left",font=("Arial Rounded MT Bold", 11), wraplength=330)
     resultado.pack(pady=10)
 
     def mostrar_promedios():
@@ -244,7 +248,7 @@ def abrir_promedios():
         else:
             texto = "Promedios por materia:\n"
             for materia, promedio in datos["promedios_materias"].items():
-                texto += materia + ": " + str(promedio) + "\n"
+                texto += materia + ": " + str(promedio) + "\n"+"\n"
             texto += "\nPromedio general: " + str(datos["promedio_general"])
             resultado.config(text=texto)
 
@@ -266,7 +270,7 @@ def abrir_historial():
     entrada_dni = crear_campo(ventana, 36)
 
     resultado = tk.Label(ventana, bg=COLOR_FONDO, fg=COLOR_TEXTO,
-                         justify="left", wraplength=330)
+                         justify="left",font=("Arial Rounded MT Bold", 11), wraplength=330)
     resultado.pack(pady=10)
 
     def mostrar_historial():
