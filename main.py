@@ -288,9 +288,6 @@ if __name__ == "__main__":
     tk.Label(ventana, text="Sistema de Gestión Académica",
              font=("Arial", 17, "bold"),
              bg=COLOR_FONDO, fg=COLOR_PRINCIPAL).pack(pady=8)
-    tk.Label(ventana, text="UNLaR · Grupo 1",
-             font=("Arial", 10), bg=COLOR_FONDO,
-             fg=COLOR_GRIS).pack(pady=4)
     tk.Frame(ventana, height=1, bg=COLOR_LINEA).pack(fill="x", padx=60)
 
     botones = [
