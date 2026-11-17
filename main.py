@@ -78,15 +78,13 @@ def formatear_dni(dni):
 def abrir_registro():
     ventana = tk.Toplevel()
     ventana.title("Registrar estudiante")
-    centrar_ventana(ventana, 430, 470)
+    centrar_ventana(ventana, 430, 500)
     ventana.configure(bg=COLOR_FONDO)
     crear_titulo(ventana, "Registrar estudiante")
 
-    # El DNI va arriba, ocupando todo el ancho.
     crear_etiqueta(ventana, "DNI")
     entrada_dni = crear_campo(ventana, 36)
 
-    # Nombre y apellido van uno al lado del otro.
     fila = tk.Frame(ventana, bg=COLOR_FONDO)
     fila.pack()
 
@@ -99,13 +97,20 @@ def abrir_registro():
     columna_apellido.pack(side="left", padx=10)
     crear_etiqueta(columna_apellido, "Apellido")
     entrada_apellido = crear_campo(columna_apellido, 17)
+    crear_etiqueta(ventana, "Fecha de nacimiento (DD/MM/AAAA)")
+    entrada_fecha = crear_campo(ventana, 36)
+
+    crear_etiqueta(ventana, "Año de ingreso")
+    entrada_año = crear_campo(ventana, 36)
 
     # Toma lo escrito, llama a la función y muestra si salió bien o mal.
     def registrar():
         ok, mensaje = estudiantes.registrar_estudiante(
             entrada_dni.get(),
             entrada_nombre.get(),
-            entrada_apellido.get()
+            entrada_apellido.get(),
+            entrada_fecha.get(),
+            entrada_año.get()
         )
         if ok:
             messagebox.showinfo("Registrar estudiante", mensaje)
@@ -114,6 +119,8 @@ def abrir_registro():
             entrada_nombre.delete(0, tk.END)
             entrada_apellido.delete(0, tk.END)
             entrada_dni.focus_set()
+            entrada_fecha.delete(0, tk.END)
+            entrada_año.delete(0, tk.END)
         else:
             messagebox.showerror("Registrar estudiante", mensaje)
 
@@ -282,7 +289,7 @@ def abrir_historial():
 if __name__ == "__main__":
     ventana = tk.Tk()
     ventana.title("Sistema de Gestión Académica")
-    centrar_ventana(ventana, 470, 500)
+    centrar_ventana(ventana, 470, 450)
     ventana.configure(bg=COLOR_FONDO)
     ventana.resizable(False, False)
     tk.Label(ventana, text="Sistema de Gestión Académica",
