@@ -2,6 +2,21 @@ import tkinter as tk
 import estudiantes
 import calificaciones
 
+COLOR_FONDO = "#F1F5F9"
+COLOR_PRINCIPAL = "#203B59"
+COLOR_TEXTO = "#243447"
+COLOR_BLANCO = "#FFFFFF"
+def crear_etiqueta(ventana, texto):
+    tk.Label(ventana, text=texto, bg=COLOR_FONDO,
+             fg=COLOR_TEXTO).pack()
+
+def centrar_ventana(ventana, ancho, alto):
+    pantalla_ancho = ventana.winfo_screenwidth()
+    pantalla_alto = ventana.winfo_screenheight()
+    x = (pantalla_ancho - ancho) // 2
+    y = (pantalla_alto - alto) // 2
+    ventana.geometry(f"{ancho}x{alto}+{x}+{y}")
+    
 # Abre una ventana secundaria con el título de la sección y el aviso "En construcción".
 def abrir_ventana(titulo):
     ventana = tk.Toplevel()
@@ -18,105 +33,109 @@ def abrir_busqueda():
 
 def abrir_calificaciones():
     ventana = tk.Toplevel()
-    ventana.title("Cargar materias y calificaciones")
-    ventana.geometry("400x350")
-    ventana.resizable(False, False)
-
+    ventana.title("Cargar calificaciones")
+    centrar_ventana(ventana, 400, 350)
+    ventana.configure(bg=COLOR_FONDO)
     tk.Label(ventana, text="Cargar calificación",
-             font=("Arial", 14, "bold")).pack(pady=15)
-
-    tk.Label(ventana, text="DNI del estudiante:").pack()
-    entrada_dni = tk.Entry(ventana)
+             font=("Arial", 16, "bold"),
+             bg=COLOR_FONDO, fg=COLOR_PRINCIPAL).pack(pady=15)
+    crear_etiqueta(ventana, "DNI del estudiante")
+    entrada_dni = tk.Entry(ventana, width=30)
     entrada_dni.pack(pady=5)
-
-    tk.Label(ventana, text="Materia:").pack()
-    entrada_materia = tk.Entry(ventana)
+    crear_etiqueta(ventana, "Materia")
+    entrada_materia = tk.Entry(ventana, width=30)
     entrada_materia.pack(pady=5)
-
-    tk.Label(ventana, text="Nota (1 a 10):").pack()
-    entrada_nota = tk.Entry(ventana)
+    crear_etiqueta(ventana, "Nota (1 a 10)")
+    entrada_nota = tk.Entry(ventana, width=30)
     entrada_nota.pack(pady=5)
-
-    resultado = tk.Label(ventana, text="")
+    resultado = tk.Label(ventana, bg=COLOR_FONDO)
     resultado.pack(pady=10)
-
     def guardar_nota():
-        dni = entrada_dni.get()
-        materia = entrada_materia.get()
-        nota = entrada_nota.get()
-
-        mensaje = calificaciones.cargar_nota(dni, materia, nota)
+        mensaje = calificaciones.cargar_nota(
+            entrada_dni.get(),
+            entrada_materia.get(),
+            entrada_nota.get()
+        )
         resultado.config(text=mensaje)
-
-    tk.Button(ventana, text="Guardar nota",
-              command=guardar_nota).pack(pady=10)
+    tk.Button(ventana, text="Guardar calificación",
+              command=guardar_nota,
+              bg=COLOR_PRINCIPAL, fg=COLOR_BLANCO).pack(pady=10)
 
 def abrir_promedios():
     ventana = tk.Toplevel()
     ventana.title("Calcular promedios")
-    tk.Label(ventana, text="DNI del estudiante:").pack()
-    entrada_dni = tk.Entry(ventana)
-    entrada_dni.pack()
-    resultado = tk.Label(ventana, text="")
-    resultado.pack(pady=10)
+    centrar_ventana(ventana, 400, 350)
+    ventana.configure(bg=COLOR_FONDO)
+    tk.Label(ventana, text="Promedios académicos",
+             font=("Arial", 16, "bold"),
+             bg=COLOR_FONDO, fg=COLOR_PRINCIPAL).pack(pady=15)
+    crear_etiqueta(ventana, "DNI del estudiante")
+    entrada_dni = tk.Entry(ventana, width=30)
+    entrada_dni.pack(pady=5)
+    resultado = tk.Label(ventana, bg=COLOR_FONDO, fg=COLOR_TEXTO)
+    resultado.pack(pady=15)
     def mostrar_promedios():
-        dni = entrada_dni.get()
-        datos = calificaciones.calcular_promedio(dni)
+        datos = calificaciones.calcular_promedio(entrada_dni.get())
         if "error" in datos:
             resultado.config(text=datos["error"])
         else:
             texto = "Promedios por materia:\n"
-
             for materia, promedio in datos["promedios_materias"].items():
                 texto += materia + ": " + str(promedio) + "\n"
-
-            texto += "Promedio general: " + str(datos["promedio_general"])
+            texto += "\nPromedio general: " + str(datos["promedio_general"])
             resultado.config(text=texto)
-    tk.Button(ventana, text="Calcular", command=mostrar_promedios).pack()
+    tk.Button(ventana, text="Calcular promedios",
+              command=mostrar_promedios,
+              bg=COLOR_PRINCIPAL, fg=COLOR_BLANCO).pack(pady=10)
 
 def abrir_historial():
     ventana = tk.Toplevel()
-    ventana.title("Consultar historial académico")
-    tk.Label(ventana, text="DNI del estudiante:").pack()
-    entrada_dni = tk.Entry(ventana)
-    entrada_dni.pack()
-    resultado = tk.Label(ventana, text="")
-    resultado.pack(pady=10)
+    ventana.title("Historial académico")
+    centrar_ventana(ventana, 400, 350)
+    ventana.configure(bg=COLOR_FONDO)
+    tk.Label(ventana, text="Historial académico",
+             font=("Arial", 16, "bold"),
+             bg=COLOR_FONDO, fg=COLOR_PRINCIPAL).pack(pady=15)
+    crear_etiqueta(ventana, "DNI del estudiante")
+    entrada_dni = tk.Entry(ventana, width=30)
+    entrada_dni.pack(pady=5)
+    resultado = tk.Label(ventana, bg=COLOR_FONDO, fg=COLOR_TEXTO,
+                         justify="left")
+    resultado.pack(pady=15)
     def mostrar_historial():
-        dni = entrada_dni.get()
-        datos = calificaciones.obtener_historial(dni)
+        datos = calificaciones.obtener_historial(entrada_dni.get())
         if "error" in datos:
             resultado.config(text=datos["error"])
         else:
             texto = "Estudiante: " + datos["nombre"] + " " + datos["apellido"] + "\n"
-
             for materia, notas in datos["materias"].items():
                 texto += "\n" + materia + ": " + str(notas)
             resultado.config(text=texto)
-    tk.Button(ventana, text="Consultar", command=mostrar_historial).pack()
+    tk.Button(ventana, text="Consultar historial",
+              command=mostrar_historial,
+              bg=COLOR_PRINCIPAL, fg=COLOR_BLANCO).pack(pady=10)
 
-# El programa arranca solo si ejecutamos este archivo directamente.
 if __name__ == "__main__":
-    # Creamos la ventana principal con su título.
     ventana = tk.Tk()
     ventana.title("Sistema de Gestión Académica")
-
-    # Tamaño fijo: no se puede agrandar ni achicar.
-    ventana.geometry("400x380")
+    centrar_ventana(ventana, 450, 480)
+    ventana.configure(bg=COLOR_FONDO)
     ventana.resizable(False, False)
-
-    # Título que aparece arriba de los botones.
-    tk.Label(ventana, text="Sistema de Gestión Académica", font=("Arial", 14, "bold")).pack(pady=20)
-
-    # Los 5 botones del menú, uno debajo del otro. Cada uno llama a su función.
-    tk.Button(ventana, text="Registrar estudiante", width=32, command=abrir_registro).pack(pady=5)
-    tk.Button(ventana, text="Buscar estudiante", width=32, command=abrir_busqueda).pack(pady=5)
-    tk.Button(ventana, text="Cargar materias y calificaciones", width=32, command=abrir_calificaciones).pack(pady=5)
-    tk.Button(ventana, text="Calcular promedios", width=32, command=abrir_promedios).pack(pady=5)
-    tk.Button(ventana, text="Consultar historial académico", width=32, command=abrir_historial).pack(pady=5)
-
-    # Botón para cerrar la aplicación.
-    tk.Button(ventana, text="Salir", width=32, command=ventana.destroy).pack(pady=20)
-
-    # Mantiene la ventana abierta esperando los clics del usuario.
+    tk.Label(ventana, text="Sistema de Gestión Académica",
+             font=("Arial", 17, "bold"),
+             bg=COLOR_FONDO, fg=COLOR_PRINCIPAL).pack(pady=25)
+    botones = [
+        ("Registrar estudiante", abrir_registro),
+        ("Buscar estudiante", abrir_busqueda),
+        ("Cargar calificaciones", abrir_calificaciones),
+        ("Calcular promedios", abrir_promedios),
+        ("Consultar historial", abrir_historial)
+    ]
+    for texto, funcion in botones:
+        tk.Button(ventana, text=texto, width=30,
+                  command=funcion,
+                  bg=COLOR_PRINCIPAL, fg=COLOR_BLANCO,
+                  font=("Arial", 10, "bold")).pack(pady=7)
+    tk.Button(ventana, text="Salir", width=30,
+              command=ventana.destroy).pack(pady=15)
     ventana.mainloop()

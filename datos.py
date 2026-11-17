@@ -1,13 +1,6 @@
-# Diccionario compartido con todos los estudiantes del sistema.
 import json
 from pathlib import Path
-estudiantes = {
-    "40123456": {
-        "nombre": "Ana",
-        "apellido": "Pérez",
-        "materias": {}
-    }
-}
+estudiantes = {}
 ARCHIVO = Path(__file__).with_name("estudiantes.json")
 def cargar_datos():
     if ARCHIVO.exists():
