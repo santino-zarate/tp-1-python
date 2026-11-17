@@ -1,4 +1,4 @@
-from datos import estudiantes
+from datos import estudiantes, guardar_datos
 
 def _obtener_estudiante(dni):
     return estudiantes.get(dni)
@@ -24,6 +24,7 @@ def cargar_nota(dni, materia, nota):
     if materia not in materias:
         materias[materia] = []
     materias[materia].append(nota)
+    guardar_datos()
     return "Nota cargada correctamente."
 
 def calcular_promedio(dni):

@@ -1,0 +1,12 @@
+{
+    "40123456": {
+        "nombre": "Ana",
+        "apellido": "Pérez",
+        "materias": {
+            "matematica": [
+                9.0,
+                8
+            ]
+        }
+    }
+}
